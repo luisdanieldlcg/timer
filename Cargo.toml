@@ -1,6 +1,6 @@
 [package]
 name = "timer"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "A colorful time progress display, akin to a sleep command but with a visually engaging progress report"
 

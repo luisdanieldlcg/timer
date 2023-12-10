@@ -33,15 +33,23 @@ pub struct Cli {
 pub fn initialize<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
     terminal::enable_raw_mode()?;
     crossterm::execute!(io::stdout(), terminal::EnterAlternateScreen)?;
-    // TODO: set custom panic hook
+    let panic_hook = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |panic| {
+        reset().expect("Failed to reset terminal");
+        panic_hook(panic);
+    }));
     terminal.hide_cursor()?;
+    terminal.clear()?;
     Ok(())
 }
 
 pub fn run_timer<B: Backend>(cli: Cli, terminal: &mut Terminal<B>) -> io::Result<()> {
     let start_time = time::Instant::now();
     let timer_started_at = chrono::Local::now();
-    let duration = humantime::parse_duration(&cli.duration).expect("Failed to parse duration");
+    let duration = match humantime::parse_duration(&cli.duration) {
+        Ok(duration) => duration,
+        Err(e) => return Err(io::Error::new(io::ErrorKind::InvalidInput, e)),
+    };
 
     // parse the duration from the cli
     while start_time.elapsed() < duration {
@@ -101,9 +109,14 @@ pub fn draw_timer(
     frame.render_widget(timer, render_area);
 }
 
-pub fn exit<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
+pub fn reset() -> io::Result<()> {
     terminal::disable_raw_mode()?;
     crossterm::execute!(io::stdout(), terminal::LeaveAlternateScreen)?;
+    Ok(())
+}
+
+pub fn exit<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
+    reset()?;
     terminal.show_cursor()?;
     Ok(())
 }
