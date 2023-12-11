@@ -1,6 +1,6 @@
 [package]
 name = "timer"
-version = "0.2.1"
+version = "0.3.0"
 edition = "2021"
 description = "A colorful time progress display, akin to a sleep command but with a visually engaging progress report"
 
@@ -12,4 +12,11 @@ clap = { version = "4.4.11", features = ["derive"] }
 crossterm = "0.27.0"
 humantime = "2.1.0"
 notify-rust = {version = "4.5.10"}
-ratatui = "0.24.0"
+ratatui = {version = "0.24.0", default-features = false, features = ["crossterm"]}
+
+[profile.release]
+strip = true # Strip symbols from the binary.
+opt-level = "z"  # Optimize for size.
+lto = true # Enable link-time optimizations.
+codegen-units = 1 # Compile the entire crate as a single unit.
+panic = "abort" # Abort on panic.
