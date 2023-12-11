@@ -102,9 +102,7 @@ fn run_timer<B: Backend>(cli: Cli, terminal: &mut Terminal<B>) -> AppError {
         Some(name) => name,
         None => "Timer".to_owned(),
     };
-    if cli.notify {
-        notify(&format!("{} has started.", name));
-    }
+   
     let start_time = time::Instant::now();
     let timer_started_at = chrono::Local::now();
     let duration = match cli.duration.parse::<u64>() {
@@ -114,6 +112,11 @@ fn run_timer<B: Backend>(cli: Cli, terminal: &mut Terminal<B>) -> AppError {
             Err(e) => return Err(Error::UnknownUnit(e.to_string())),
         },
     };
+    
+    // If Cli was parsed correctly, notify the user that the timer has started
+    if cli.notify {
+        notify(&format!("{} has started.", name));
+    }
 
     // parse the duration from the cli
     while start_time.elapsed() < duration {
@@ -178,7 +181,6 @@ pub fn draw_timer(
         name: cli.name.clone(),
         format_12h: cli.format == "12h",
     };
-
     let render_area = Rect::new(0, 0, frame.size().width, 1);
     frame.render_widget(timer, render_area);
 }
@@ -232,6 +234,13 @@ impl Widget for Timer {
             .render(area, buf);
 
         let offset_y = 3;
+        let percent = format!("{}%", self.percent);
+        buf.set_string(
+            area.width - percent.len() as u16,
+            offset_y,
+            percent,
+            style,
+        );
 
         for i in 0..area.width {
             buf.get_mut(i, offset_y).set_bg(Color::Rgb(45, 45, 45));

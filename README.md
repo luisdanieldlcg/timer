@@ -1,10 +1,21 @@
-# Timer
+<p align="center">
+	<h1 align="center">Timer</h1>
+	<p align="center"> A colorful time progress display, akin to a sleep command but with a visually engaging progress report  </p>
+</p>
 
-A colorful time progress display, akin to a sleep command but with a visually engaging progress report
+## Screenshots
+
+![Demo](img/demo.png)
+
+You will also get system notifications when the timer begins and ends:
+
+![Notification](img/notification.png)
+
+To disable notifications, use the `--notify=false` flag.
 
 ## How to use
 
-```bash
+```
 A colorful time progress display, akin to a sleep command but with a visually engaging progress report
 
 Usage: timer [OPTIONS] <DURATION>
