@@ -22,7 +22,6 @@ enum Error {
     UnknownUnit(String),
     Draw(String),
     Terminal(String),
-    NotificationSend,
 }
 
 impl std::fmt::Display for Error {
@@ -31,9 +30,6 @@ impl std::fmt::Display for Error {
             Error::UnknownUnit(unit) => write!(f, "[Cli] {}", unit),
             Error::Draw(msg) => write!(f, "[Draw] {}", msg),
             Error::Terminal(msg) => write!(f, "[Terminal] {}", msg),
-            Error::NotificationSend => {
-                write!(f, "[Notification] Could not send system notification")
-            }
         }
     }
 }
@@ -86,25 +82,28 @@ fn initialize<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
     Ok(())
 }
 
-fn notify(message: &str) -> AppError {
-    Notification::new()
+fn notify(message: &str)  {
+    let sound = match std::env::consts::OS {
+        "macos" => "Boop",
+        // TODO: see what works best for windows
+        // Assume an XDG-compliant os
+        _ => "message-new-email",
+    };
+    // ignore errors
+    let _ = Notification::new()
         .summary("Timer")
         .body(message)
         .icon("terminal")
-        .sound_name("Boop")
-        .show()
-        .map_err(|_| Error::NotificationSend)?;
-    Ok(())
+        .sound_name(sound)
+        .show();
 }
 fn run_timer<B: Backend>(cli: Cli, terminal: &mut Terminal<B>) -> AppError {
     let name = match cli.name.clone() {
         Some(name) => name,
         None => "Timer".to_owned(),
     };
-    // ignore errors
     if cli.notify {
-        // let _ = notify("Timer has started.");
-        let _ = notify(&format!("{} has started.", name));
+        notify(&format!("{} has started.", name));
     }
     let start_time = time::Instant::now();
     let timer_started_at = chrono::Local::now();
@@ -147,7 +146,7 @@ fn run_timer<B: Backend>(cli: Cli, terminal: &mut Terminal<B>) -> AppError {
             .map_err(|_| Error::Draw("Something went very wrong.".to_owned()))?;
     }
     if cli.notify {
-        let _ = notify(&format!("{} is over!", name));
+        notify(&format!("{} is over!", name));
     }
     Ok(())
 }

@@ -1,6 +1,6 @@
 [package]
 name = "timer"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 description = "A colorful time progress display, akin to a sleep command but with a visually engaging progress report"
 
@@ -11,5 +11,5 @@ chrono = "0.4.31"
 clap = { version = "4.4.11", features = ["derive"] }
 crossterm = "0.27.0"
 humantime = "2.1.0"
-notify-rust = {version = "4.5.10", features = ["images"] }
+notify-rust = {version = "4.5.10"}
 ratatui = "0.24.0"
