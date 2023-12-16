@@ -1,6 +1,6 @@
 <p align="center">
 	<h1 align="center">Timer</h1>
-	<p align="center"> A colorful time progress display, akin to a sleep command but with a visually engaging progress report  </p>
+	<p align="center"> A colorful time progress display, akin to a sleep command but with a visually engaging progress report.  </p>
 </p>
 
 ## Screenshots
